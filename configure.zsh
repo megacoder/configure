@@ -45,10 +45,10 @@ fi
 if [ ! -x ./configure ]; then
 	if [ "${VERBOSE}" ]; then
 		export BOOTSTRAP_VERBOSE=yes
-		bootstrap ${VERBOSE}
+		bootstrap
 	else
 		unset BOOTSTRAP_VERBOSE
-		bootstrap ${VERBOSE}
+		bootstrap
 	fi
 fi
 #
