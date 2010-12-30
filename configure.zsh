@@ -30,10 +30,7 @@ if [ -x "${CUSTOM}" ]; then
 	echo "Running configure with preferred arguments"
 	. "${CUSTOM}"
 else
-	case "$(arch)" in
-	x86_64 )	CCMODE='-m64';;
-	* )		CCMODE='-m32';;
-	esac
+	CCMODE='-march=native'
 	echo "Running configure with standard arguments"
 	export	CCACHE_PREFIX=distcc
 	export	CC="ccache gcc -std=gnu99 ${CCMODE}"
