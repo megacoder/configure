@@ -30,12 +30,12 @@ if [ -x "${CUSTOM}" ]; then
 	echo "Running configure with preferred arguments"
 	. "${CUSTOM}"
 else
-	CCMODE='-march=native'
 	echo "Running configure with standard arguments"
 	export	CCACHE_PREFIX=distcc
-	export	CC="ccache gcc -std=gnu99 ${CCMODE}"
+	unset	CCACHE_PREFIX
+	export	CC="gcc -std=gnu99"
 	export	CFLAGS='-pipe -Os -D_FORTIFY_SOURCE=2'
-	export	CXX="ccache g++ ${CCMODE}"
+	export	CXX="g++"
 	export	CXXFLAGS='-pipe -Os'
 fi
 #
