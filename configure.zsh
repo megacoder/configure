@@ -1,15 +1,18 @@
 #!/bin/zsh
 
 ME=$(basename $0)
-USAGE="usage: ${ME} [-j #] [-m] [-n name] [-v] [options]"
+USAGE="usage: ${ME} [-d] [-j #] [-m] [-n name] [-v] [options]"
 
+distcc=yes
 VERBOSE=""
 want_make=
 jobs=12
 NAME=$(basename ${PWD})
 
-while getopts j:mn:v c; do
+distrib=yes
+while getopts dj:mn:v c; do
 	case "${c}" in
+	d )	distrib="";;
 	j )	jobs="${OPTARG}";;
 	m )	want_make=yes;;
 	n )	NAME="${OPTARG}";;
@@ -31,12 +34,19 @@ if [ -x "${CUSTOM}" ]; then
 	. "${CUSTOM}"
 else
 	echo "Running configure with standard arguments"
-	export	CCACHE_PREFIX=distcc
-	unset	CCACHE_PREFIX
-	export	CC="gcc -std=gnu99"
-	export	CFLAGS='-pipe -Os -D_FORTIFY_SOURCE=2'
-	export	CXX="g++"
-	export	CXXFLAGS='-pipe -Os'
+	if [ "${distrib}" ]; then
+		export	CCACHE_PREFIX=distcc
+		export	CC="ccache gcc -std=gnu99 ${CCMODE}"
+		export	CFLAGS='-pipe -Os -D_FORTIFY_SOURCE=2'
+		export	CXX="ccache g++ ${CCMODE}"
+		export	CXXFLAGS='-pipe -Os'
+	else
+		unset	CCACHE_PREFIX
+		export	CC="gcc -std=gnu99 ${CCMODE}"
+		export	CFLAGS='-pipe -Os -D_FORTIFY_SOURCE=2'
+		export	CXX="g++ ${CCMODE}"
+		export	CXXFLAGS='-pipe -Os'
+	fi
 fi
 #
 if [ ! -x ./configure ]; then
