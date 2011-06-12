@@ -3,15 +3,22 @@
 ME=$(basename $0)
 USAGE="usage: ${ME} [-d] [-j #] [-m] [-n name] [-v] [options]"
 
+distcc=yes
 VERBOSE=""
 want_make=
 jobs=12
 NAME=$(basename ${PWD})
 
+<<<<<<< HEAD
 distrib=yes
 while getopts dj:mn:v c; do
 	case "${c}" in
 	d )	distrib="";;
+=======
+while getopts dj:mn:v c; do
+	case "${c}" in
+	d )	distcc="";;
+>>>>>>> 47272a693a7e7dc3ee5ad1aa5f55675f751962a7
 	j )	jobs="${OPTARG}";;
 	m )	want_make=yes;;
 	n )	NAME="${OPTARG}";;
