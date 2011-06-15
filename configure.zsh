@@ -28,39 +28,40 @@ if [ $# -ge 1 ]; then
 fi
 
 CUSTOM="${0}-${NAME}"
-
-if [ -x "${CUSTOM}" ]; then
-	echo "Running configure with preferred arguments"
-	. "${CUSTOM}"
-else
-	echo "Running configure with standard arguments"
-	if [ "${distrib}" ]; then
-		export	CCACHE_PREFIX=distcc
-		export	CC="ccache gcc -std=gnu99 ${CCMODE}"
-		export	CFLAGS='-pipe -Os -D_FORTIFY_SOURCE=2'
-		export	CXX="ccache g++ ${CCMODE}"
-		export	CXXFLAGS='-pipe -Os'
+(
+	if [ -x "${CUSTOM}" ]; then
+		echo "Running configure with preferred arguments"
+		. "${CUSTOM}"
 	else
-		unset	CCACHE_PREFIX
-		export	CC="gcc -std=gnu99 ${CCMODE}"
-		export	CFLAGS='-pipe -Os -D_FORTIFY_SOURCE=2'
-		export	CXX="g++ ${CCMODE}"
-		export	CXXFLAGS='-pipe -Os'
+		echo "Running configure with standard arguments"
+		if [ "${distrib}" ]; then
+			export	CCACHE_PREFIX=distcc
+			export	CC="ccache gcc -std=gnu99 ${CCMODE}"
+			export	CFLAGS='-pipe -Os -D_FORTIFY_SOURCE=2'
+			export	CXX="ccache g++ ${CCMODE}"
+			export	CXXFLAGS='-pipe -Os'
+		else
+			unset	CCACHE_PREFIX
+			export	CC="gcc -std=gnu99 ${CCMODE}"
+			export	CFLAGS='-pipe -Os -D_FORTIFY_SOURCE=2'
+			export	CXX="g++ ${CCMODE}"
+			export	CXXFLAGS='-pipe -Os'
+		fi
 	fi
-fi
-#
-if [ ! -x ./configure ]; then
-	if [ "${VERBOSE}" ]; then
-		export BOOTSTRAP_VERBOSE=yes
-		bootstrap
-	else
-		unset BOOTSTRAP_VERBOSE
-		bootstrap
+	#
+	if [ ! -x ./configure ]; then
+		if [ "${VERBOSE}" ]; then
+			export BOOTSTRAP_VERBOSE=yes
+			bootstrap
+		else
+			unset BOOTSTRAP_VERBOSE
+			bootstrap
+		fi
 	fi
-fi
-#
-./configure								\
-	--prefix=/opt/${NAME}						\
-	$@
+	#
+	./configure							\
+		--prefix=/opt/${NAME}					\
+		$@
 
-[ "${want_make}" ] && make -j${JOBS}
+	[ "${want_make}" ] && make -j${JOBS}
+) 2>&1 | tee "${NAME}-action.log"
