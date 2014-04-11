@@ -60,6 +60,9 @@ CUSTOM="${0}-${NAME}"
 	fi
 	#
 	./configure							\
+		--enable-silent-rules					\
+		--enable-maintainer-mode				\
+		--with-gnu-ld						\
 		--prefix=/opt/${NAME}					\
 		$@
 
